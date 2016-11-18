@@ -16,6 +16,7 @@ import (
 // StringService provides operations on strings.
 type StringService interface {
 	Uppercase(string) (string, error)
+	Lowercase(string) (string, error)
 	Count(string) int
 }
 
@@ -26,6 +27,13 @@ func (stringService) Uppercase(s string) (string, error) {
 		return "", ErrEmpty
 	}
 	return strings.ToUpper(s), nil
+}
+
+func (stringService) Lowercase(s string) (string, error) {
+	if s == "" {
+		return "", ErrEmpty
+	}
+	return strings.ToLower(s), nil
 }
 
 func (stringService) Count(s string) int {
@@ -45,7 +53,7 @@ func main() {
 
 	lowercaseHandler := httptransport.NewServer(
 		ctx,
-		makeUppercaseEndpoint(svc),
+		makeLowercaseEndpoint(svc),
 		decodeUppercaseRequest,
 		encodeResponse,
 	)
@@ -67,6 +75,17 @@ func makeUppercaseEndpoint(svc StringService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(uppercaseRequest)
 		v, err := svc.Uppercase(req.S)
+		if err != nil {
+			return uppercaseResponse{v, err.Error()}, nil
+		}
+		return uppercaseResponse{v, ""}, nil
+	}
+}
+
+func makeLowercaseEndpoint(svc StringService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(uppercaseRequest)
+		v, err := svc.Lowercase(req.S)
 		if err != nil {
 			return uppercaseResponse{v, err.Error()}, nil
 		}
