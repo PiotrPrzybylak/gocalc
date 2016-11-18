@@ -43,6 +43,13 @@ func main() {
 		encodeResponse,
 	)
 
+	lowercaseHandler := httptransport.NewServer(
+		ctx,
+		makeUppercaseEndpoint(svc),
+		decodeUppercaseRequest,
+		encodeResponse,
+	)
+
 	countHandler := httptransport.NewServer(
 		ctx,
 		makeCountEndpoint(svc),
@@ -51,6 +58,7 @@ func main() {
 	)
 
 	http.Handle("/uppercase", uppercaseHandler)
+	http.Handle("/lowercase", lowercaseHandler)
 	http.Handle("/count", countHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
