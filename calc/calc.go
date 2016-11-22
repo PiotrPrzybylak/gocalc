@@ -18,7 +18,10 @@ func calculateHandler(w http.ResponseWriter, r *http.Request) {
 		result = number1 + number2
 	}
 
-	fmt.Fprintf(w, "<h1>Result: %v</h1>",
+	fmt.Fprintf(w, "<h1> %v %v %v = %v</h1>",
+		number1,
+		operation,
+		number2,
 		result)
 }
 
